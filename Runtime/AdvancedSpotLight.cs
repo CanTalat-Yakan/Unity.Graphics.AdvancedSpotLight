@@ -7,10 +7,6 @@ namespace UnityEssentials
     [RequireComponent(typeof(Light))]
     public class AdvancedSpotLight : MonoBehaviour
     {
-        private const string RedChannelName = "RedChannel";
-        private const string GreenChannelName = "GreenChannel";
-        private const string BlueChannelName = "BlueChannel";
-
         [Range(0, 10)] public float _colorFringing = 5f;
 
         private Light _mainLight;
@@ -52,6 +48,10 @@ namespace UnityEssentials
         {
             _mainLight = GetComponent<Light>();
             _mainLight.enabled = false;
+
+            const string RedChannelName = "RedChannel";
+            const string GreenChannelName = "GreenChannel";
+            const string BlueChannelName = "BlueChannel";
 
             // Create or find child lights
             _blueLight = GetOrCreateChannelLight(BlueChannelName, Color.blue);
