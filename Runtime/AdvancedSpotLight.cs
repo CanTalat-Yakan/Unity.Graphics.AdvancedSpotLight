@@ -30,7 +30,7 @@ namespace UnityEssentials
         public void OnValidate() =>
             UpdateChannelLights();
 
-        [MenuItem("GameObject/Light/Advanced Spot Light", false)]
+        [MenuItem("GameObject/Essentials/Advanced Spot Light", false)]
         private static void InstantiateAdvancedSpotLight(MenuCommand menuCommand)
         {
             var go = new GameObject("Advanced Spot Light");
