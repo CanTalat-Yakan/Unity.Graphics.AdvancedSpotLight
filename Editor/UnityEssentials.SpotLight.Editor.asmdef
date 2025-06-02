@@ -1,0 +1,16 @@
+{
+    "name": "UnityEssentials.SpotLight.Editor",
+    "rootNamespace": "UnityEssentials",
+    "references": [
+        "GUID:ae1de690e10913241badd5e3a10dd62e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
