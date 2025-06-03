@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace UnityEssentials
 {
@@ -14,7 +16,12 @@ namespace UnityEssentials
         private Light _greenLight;
         private Light _blueLight;
 
-        public void Awake()
+        private HDAdditionalLightData _mainLightHD;
+        private HDAdditionalLightData _redLightHD;
+        private HDAdditionalLightData _greenLightHD;
+        private HDAdditionalLightData _blueLightHD;
+
+        public void Start()
         {
             SetupChannelLights();
             UpdateChannelLights();
@@ -41,12 +48,12 @@ namespace UnityEssentials
             const string BlueChannelName = "BlueChannel";
 
             // Create or find child lights
-            _blueLight = GetOrCreateChannelLight(BlueChannelName, Color.blue);
-            _greenLight = GetOrCreateChannelLight(GreenChannelName, Color.green);
-            _redLight = GetOrCreateChannelLight(RedChannelName, Color.red);
+            GetOrCreateChannelLight(BlueChannelName, Color.blue, out _blueLight, out _blueLightHD);
+            GetOrCreateChannelLight(GreenChannelName, Color.green, out _greenLight, out _greenLightHD);
+            GetOrCreateChannelLight(RedChannelName, Color.red, out _redLight, out _redLightHD);
         }
 
-        private Light GetOrCreateChannelLight(string name, Color color)
+        private void GetOrCreateChannelLight(string name, Color color, out Light light, out HDAdditionalLightData hdData)
         {
             Transform child = transform.Find(name);
             GameObject go;
@@ -58,16 +65,17 @@ namespace UnityEssentials
                 go.transform.parent = transform;
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
-                go.hideFlags = HideFlags.HideInHierarchy;
+                //go.hideFlags = HideFlags.HideInHierarchy;
             }
 
-            var light = go.GetComponent<Light>();
+            light = go.GetComponent<Light>();
             if (light == null)
                 light = go.AddComponent<Light>();
 
             light.type = LightType.Spot;
             light.color = color;
-            return light;
+
+            hdData = go.GetComponent<HDAdditionalLightData>();
         }
 
         private void UpdateChannelLights()
@@ -78,6 +86,10 @@ namespace UnityEssentials
             CopyLightProperties(_mainLight, _redLight, Color.red);
             CopyLightProperties(_mainLight, _greenLight, Color.green);
             CopyLightProperties(_mainLight, _blueLight, Color.blue);
+
+            CopyHDLightData(_mainLight, _redLight, _redLightHD);
+            CopyHDLightData(_mainLight, _greenLight, _greenLightHD);
+            CopyHDLightData(_mainLight, _blueLight, _blueLightHD);
 
             float fringing = GetAutoColorFringing(_mainLight.spotAngle);
 
@@ -102,11 +114,11 @@ namespace UnityEssentials
             target.color = color * source.color;
             target.colorTemperature = source.colorTemperature;
             target.useColorTemperature = source.useColorTemperature;
+            target.lightUnit = source.lightUnit;
             target.intensity = source.intensity;
             target.range = source.range;
             target.innerSpotAngle = source.innerSpotAngle;
-            target.cookie = source.cookie;
-            target.cookieSize = source.cookieSize;
+            target.enableSpotReflector = source.enableSpotReflector;
 
             // Rendering
             target.renderMode = source.renderMode;
@@ -126,5 +138,42 @@ namespace UnityEssentials
             target.shadowNormalBias = source.shadowNormalBias;
             target.shadowNearPlane = source.shadowNearPlane;
         }
+
+        private void CopyHDLightData(Light source, Light target, HDAdditionalLightData hdData)
+        {
+            _mainLightHD ??= source.GetComponent<HDAdditionalLightData>();
+            if (_mainLightHD == null)
+                return;
+
+            hdData ??= target.GetComponent<HDAdditionalLightData>();
+
+            // Basic properties
+            hdData.innerSpotPercent = _mainLightHD.innerSpotPercent;
+
+            // Shadows
+            hdData.EnableShadows(true);
+            hdData.shadowUpdateMode = _mainLightHD.shadowUpdateMode;
+            hdData.SetShadowResolution(GetResolutionFromIndex(_mainLightHD.shadowResolution.level));
+            hdData.shadowDimmer = _mainLightHD.shadowDimmer;
+            hdData.volumetricDimmer = _mainLightHD.volumetricDimmer;
+            hdData.shadowTint = _mainLightHD.shadowTint;
+            hdData.shadowNearPlane = _mainLightHD.shadowNearPlane;
+
+            // IES
+            hdData.spotIESCutoffPercent = _mainLightHD.spotIESCutoffPercent;
+            if (_mainLightHD.IESTexture != null)
+                hdData.IESTexture = _mainLightHD.IESTexture;
+        }
+
+        public static int GetResolutionFromIndex(int index) =>
+            index switch
+            {
+                0 => 512,
+                1 => 1024,
+                2 => 2048,
+                3 => 4096,
+                4 => 8192,
+                _ => 2048
+            };
     }
 }
