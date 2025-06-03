@@ -2,7 +2,9 @@
     "name": "UnityEssentials.SpotLight.Editor",
     "rootNamespace": "UnityEssentials",
     "references": [
-        "GUID:ae1de690e10913241badd5e3a10dd62e"
+        "GUID:457756d89b35d2941b3e7b37b4ece6f1",
+        "GUID:ae1de690e10913241badd5e3a10dd62e",
+        "GUID:0c677762363426746abd6799d82d40b8"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

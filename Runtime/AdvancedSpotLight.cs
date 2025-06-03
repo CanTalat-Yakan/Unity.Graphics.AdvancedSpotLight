@@ -1,6 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace UnityEssentials
@@ -9,23 +8,17 @@ namespace UnityEssentials
     [RequireComponent(typeof(Light))]
     public class AdvancedSpotLight : MonoBehaviour
     {
-        [Range(0, 10)] public float _colorFringing = 5f;
+        [Range(0, 25)] public float ColorFringing = 10f;
 
-        private Light _mainLight;
-        private Light _redLight;
-        private Light _greenLight;
-        private Light _blueLight;
+        [HideInInspector] public Light MainLight;
+        [HideInInspector] public Light RedLight;
+        [HideInInspector] public Light GreenLight;
+        [HideInInspector] public Light BlueLight;
 
-        private HDAdditionalLightData _mainLightHD;
-        private HDAdditionalLightData _redLightHD;
-        private HDAdditionalLightData _greenLightHD;
-        private HDAdditionalLightData _blueLightHD;
-
-        public void Start()
-        {
-            SetupChannelLights();
-            UpdateChannelLights();
-        }
+        [HideInInspector] public HDAdditionalLightData MainLightHD;
+        [HideInInspector] public HDAdditionalLightData RedLightHD;
+        [HideInInspector] public HDAdditionalLightData GreenLightHD;
+        [HideInInspector] public HDAdditionalLightData BlueLightHD;
 
 #if UNITY_EDITOR
         public void Update()
@@ -33,69 +26,22 @@ namespace UnityEssentials
             if (Selection.activeGameObject == gameObject)
                 UpdateChannelLights();
         }
-
-        public void OnValidate() =>
-            UpdateChannelLights();
 #endif
-
-        private void SetupChannelLights()
-        {
-            _mainLight = GetComponent<Light>();
-            _mainLight.enabled = false;
-
-            const string RedChannelName = "RedChannel";
-            const string GreenChannelName = "GreenChannel";
-            const string BlueChannelName = "BlueChannel";
-
-            // Create or find child lights
-            GetOrCreateChannelLight(BlueChannelName, Color.blue, out _blueLight, out _blueLightHD);
-            GetOrCreateChannelLight(GreenChannelName, Color.green, out _greenLight, out _greenLightHD);
-            GetOrCreateChannelLight(RedChannelName, Color.red, out _redLight, out _redLightHD);
-        }
-
-        private void GetOrCreateChannelLight(string name, Color color, out Light light, out HDAdditionalLightData hdData)
-        {
-            Transform child = transform.Find(name);
-            GameObject go;
-            if (child != null)
-                go = child.gameObject;
-            else
-            {
-                go = new GameObject(name);
-                go.transform.parent = transform;
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                //go.hideFlags = HideFlags.HideInHierarchy;
-            }
-
-            light = go.GetComponent<Light>();
-            if (light == null)
-                light = go.AddComponent<Light>();
-
-            light.type = LightType.Spot;
-            light.color = color;
-
-            hdData = go.GetComponent<HDAdditionalLightData>();
-        }
 
         private void UpdateChannelLights()
         {
-            if (_mainLight == null || _redLight == null || _greenLight == null || _blueLight == null)
-                return;
+            float fringing = GetAutoColorFringing(MainLight.spotAngle);
+            RedLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing, 1, 160);
+            GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 2, 1, 160 - fringing * 0.5f);
+            BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 4, 1, 160 - fringing * 0.75f);
 
-            CopyLightProperties(_mainLight, _redLight, Color.red);
-            CopyLightProperties(_mainLight, _greenLight, Color.green);
-            CopyLightProperties(_mainLight, _blueLight, Color.blue);
+            CopyLightProperties(MainLight, RedLight, Color.red);
+            CopyLightProperties(MainLight, GreenLight, Color.green);
+            CopyLightProperties(MainLight, BlueLight, Color.blue);
 
-            CopyHDLightData(_mainLight, _redLight, _redLightHD);
-            CopyHDLightData(_mainLight, _greenLight, _greenLightHD);
-            CopyHDLightData(_mainLight, _blueLight, _blueLightHD);
-
-            float fringing = GetAutoColorFringing(_mainLight.spotAngle);
-
-            _redLight.spotAngle = Mathf.Clamp(_mainLight.spotAngle + fringing, 1, 160);
-            _greenLight.spotAngle = Mathf.Clamp(_mainLight.spotAngle + fringing / 2, 1, 160 - fringing * 0.5f);
-            _blueLight.spotAngle = Mathf.Clamp(_mainLight.spotAngle + fringing / 4, 1, 160 - fringing * 0.75f);
+            CopyHDLightData(MainLight, RedLight, RedLightHD);
+            CopyHDLightData(MainLight, GreenLight, GreenLightHD);
+            CopyHDLightData(MainLight, BlueLight, BlueLightHD);
         }
 
         private float GetAutoColorFringing(float spotAngle)
@@ -104,7 +50,7 @@ namespace UnityEssentials
             const float maxSpotAngle = 120f;
 
             float t = Mathf.InverseLerp(minSpotAngle, maxSpotAngle, spotAngle);
-            return Mathf.Lerp(0f, _colorFringing, t);
+            return Mathf.Lerp(0f, ColorFringing, t);
         }
 
         private void CopyLightProperties(Light source, Light target, Color color)
@@ -141,28 +87,42 @@ namespace UnityEssentials
 
         private void CopyHDLightData(Light source, Light target, HDAdditionalLightData hdData)
         {
-            _mainLightHD ??= source.GetComponent<HDAdditionalLightData>();
-            if (_mainLightHD == null)
-                return;
-
-            hdData ??= target.GetComponent<HDAdditionalLightData>();
-
             // Basic properties
-            hdData.innerSpotPercent = _mainLightHD.innerSpotPercent;
+            hdData.EnableShadows(source.shadows != LightShadows.None);
+            hdData.SetShadowLightLayer(MainLightHD.lightlayersMask);
+            hdData.SetShadowResolution(GetResolutionFromIndex(MainLightHD.shadowResolution.level));
+
+            hdData.innerSpotPercent = Mathf.Min(95, MainLightHD.innerSpotPercent);
 
             // Shadows
-            hdData.EnableShadows(true);
-            hdData.shadowUpdateMode = _mainLightHD.shadowUpdateMode;
-            hdData.SetShadowResolution(GetResolutionFromIndex(_mainLightHD.shadowResolution.level));
-            hdData.shadowDimmer = _mainLightHD.shadowDimmer;
-            hdData.volumetricDimmer = _mainLightHD.volumetricDimmer;
-            hdData.shadowTint = _mainLightHD.shadowTint;
-            hdData.shadowNearPlane = _mainLightHD.shadowNearPlane;
+            hdData.shadowUpdateMode = MainLightHD.shadowUpdateMode;
+            hdData.shadowDimmer = MainLightHD.shadowDimmer;
+            hdData.shadowNearPlane = MainLightHD.shadowNearPlane;
+            hdData.maxDepthBias = MainLightHD.maxDepthBias;
+            hdData.normalBias = MainLightHD.normalBias;
+            hdData.volumetricDimmer = MainLightHD.volumetricDimmer;
+            hdData.shadowTint = MainLightHD.shadowTint;
+            hdData.fadeDistance = MainLightHD.fadeDistance;
+            hdData.softnessScale = MainLightHD.softnessScale;
+            hdData.blockerSampleCount = MainLightHD.blockerSampleCount;
+            hdData.blockerSampleCount = MainLightHD.blockerSampleCount;
+            hdData.filterSampleCount = MainLightHD.filterSampleCount;
+            hdData.lightShadowRadius = MainLightHD.lightShadowRadius;
+            hdData.rayTraceContactShadow = MainLightHD.rayTraceContactShadow;
 
             // IES
-            hdData.spotIESCutoffPercent = _mainLightHD.spotIESCutoffPercent;
-            if (_mainLightHD.IESTexture != null)
-                hdData.IESTexture = _mainLightHD.IESTexture;
+            if (MainLightHD.IESTexture != null)
+            {
+                hdData.IESTexture = MainLightHD.IESTexture;
+                hdData.spotIESCutoffPercent = MainLightHD.spotIESCutoffPercent;
+
+                if (source.cookie != null)
+                {
+                    hdData.SetCookie(source.cookie);
+                    target.cookie = source.cookie;
+                    target.cookieSize = source.cookieSize;
+                }
+            }
         }
 
         public static int GetResolutionFromIndex(int index) =>
