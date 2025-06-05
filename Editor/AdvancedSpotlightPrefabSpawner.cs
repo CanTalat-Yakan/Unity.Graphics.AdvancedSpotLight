@@ -5,7 +5,7 @@ using UnityEngine.Rendering.HighDefinition;
 
 namespace UnityEssentials
 {
-    public class AdvancedSpotlightEditor
+    public class AdvancedSpotlightPrefabSpawner
     {
         [MenuItem("GameObject/Essentials/Advanced Spot Light", false, priority = 121)]
         private static void InstantiateAdvancedSpotLight(MenuCommand menuCommand)
