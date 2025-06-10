@@ -8,7 +8,8 @@ namespace UnityEssentials
     [RequireComponent(typeof(Light))]
     public class AdvancedSpotLight : MonoBehaviour
     {
-        [Range(0, 25)] public float ColorFringing = 10f;
+        [Range(0, 1)] public float ColorFringing = 0.5f;
+        [Range(-1, 1)] public float ColorShifting = 0.25f;
 
         [HideInInspector] public Light MainLight;
         [HideInInspector] public Light RedLight;
@@ -30,10 +31,7 @@ namespace UnityEssentials
 
         private void UpdateChannelLights()
         {
-            float fringing = GetAutoColorFringing(MainLight.spotAngle);
-            RedLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing, 1, 160);
-            GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 2, 1, 160 - fringing * 0.5f);
-            BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 4, 1, 160 - fringing * 0.75f);
+            UpdateChannelParameters();
 
             CopyLightProperties(MainLight, RedLight, Color.red);
             CopyLightProperties(MainLight, GreenLight, Color.green);
@@ -44,13 +42,21 @@ namespace UnityEssentials
             CopyHDLightData(MainLight, BlueLight, BlueLightHD);
         }
 
-        private float GetAutoColorFringing(float spotAngle)
+        private void UpdateChannelParameters()
         {
-            const float minSpotAngle = 10f;
-            const float maxSpotAngle = 120f;
+            // Apply ColorFringing as a spot angle offset
+            float t = Mathf.InverseLerp(10f, 120f, MainLight.spotAngle);
+            float fringing = ColorFringing * 25f;
+            RedLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing, 1, 160);
+            GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 2, 1, 160 - fringing * 0.5f);
+            BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 4, 1, 160 - fringing * 0.75f);
 
-            float t = Mathf.InverseLerp(minSpotAngle, maxSpotAngle, spotAngle);
-            return Mathf.Lerp(0f, ColorFringing, t);
+            // Apply ColorShifting as a rotation offset
+            float shiftH = ColorShifting * 5;
+            float shiftV = Mathf.Max(0, 1 - shiftH);
+            RedLight.transform.localEulerAngles = Vector3.zero;
+            GreenLight.transform.localEulerAngles = new Vector3(shiftV, shiftH, 0);
+            BlueLight.transform.localEulerAngles = new Vector3(-shiftV, shiftH / 2, 0);
         }
 
         private void CopyLightProperties(Light source, Light target, Color color)
