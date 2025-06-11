@@ -8,7 +8,7 @@ namespace UnityEssentials
     [RequireComponent(typeof(Light))]
     public class AdvancedSpotLight : MonoBehaviour
     {
-        [Range(0, 1)] public float ColorFringing = 0.5f;
+        [Range(0, 1)] public float ColorFringing = 0.25f;
         [Range(-1, 1)] public float ColorShifting = 0.25f;
 
         [HideInInspector] public Light MainLight;
@@ -16,10 +16,10 @@ namespace UnityEssentials
         [HideInInspector] public Light GreenLight;
         [HideInInspector] public Light BlueLight;
 
-        [HideInInspector] public HDAdditionalLightData MainLightHD;
-        [HideInInspector] public HDAdditionalLightData RedLightHD;
-        [HideInInspector] public HDAdditionalLightData GreenLightHD;
-        [HideInInspector] public HDAdditionalLightData BlueLightHD;
+        [HideInInspector] public HDAdditionalLightData MainLightData;
+        [HideInInspector] public HDAdditionalLightData RedLightData;
+        [HideInInspector] public HDAdditionalLightData GreenLightData;
+        [HideInInspector] public HDAdditionalLightData BlueLightData;
 
 #if UNITY_EDITOR
         public void Update()
@@ -31,15 +31,21 @@ namespace UnityEssentials
 
         private void UpdateChannelLights()
         {
+            if(MainLight == null || RedLight == null || GreenLight == null || BlueLight == null)
+                return;
+
+            if(MainLightData == null || RedLightData == null || GreenLightData == null || BlueLightData == null)
+                return;
+
             UpdateChannelParameters();
 
             CopyLightProperties(MainLight, RedLight, Color.red);
             CopyLightProperties(MainLight, GreenLight, Color.green);
             CopyLightProperties(MainLight, BlueLight, Color.blue);
 
-            CopyHDLightData(MainLight, RedLight, RedLightHD);
-            CopyHDLightData(MainLight, GreenLight, GreenLightHD);
-            CopyHDLightData(MainLight, BlueLight, BlueLightHD);
+            CopyHDLightData(MainLight, RedLight, RedLightData);
+            CopyHDLightData(MainLight, GreenLight, GreenLightData);
+            CopyHDLightData(MainLight, BlueLight, BlueLightData);
         }
 
         private void UpdateChannelParameters()
@@ -48,15 +54,15 @@ namespace UnityEssentials
             float t = Mathf.InverseLerp(10f, 120f, MainLight.spotAngle);
             float fringing = ColorFringing * 25f;
             RedLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing, 1, 160);
-            GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 2, 1, 160 - fringing * 0.5f);
-            BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing / 4, 1, 160 - fringing * 0.75f);
+            GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing * 0.5f, 1, 160 - fringing * 0.5f);
+            BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing * 0.25f, 1, 160 - fringing * 0.75f);
 
             // Apply ColorShifting as a rotation offset
             float shiftH = ColorShifting * 5;
-            float shiftV = Mathf.Max(0, 1 - shiftH);
+            float shiftV = Mathf.Max(0, ColorShifting * -1) * 5;
             RedLight.transform.localEulerAngles = Vector3.zero;
-            GreenLight.transform.localEulerAngles = new Vector3(shiftV, shiftH, 0);
-            BlueLight.transform.localEulerAngles = new Vector3(-shiftV, shiftH / 2, 0);
+            GreenLight.transform.localEulerAngles = new Vector3(shiftV, shiftH * 0.5f, 0);
+            BlueLight.transform.localEulerAngles = new Vector3(-shiftV, shiftH, 0);
         }
 
         private void CopyLightProperties(Light source, Light target, Color color)
@@ -95,32 +101,32 @@ namespace UnityEssentials
         {
             // Basic properties
             hdData.EnableShadows(source.shadows != LightShadows.None);
-            hdData.SetShadowLightLayer(MainLightHD.lightlayersMask);
-            hdData.SetShadowResolution(GetResolutionFromIndex(MainLightHD.shadowResolution.level));
+            hdData.SetShadowLightLayer(MainLightData.lightlayersMask);
+            hdData.SetShadowResolution(GetResolutionFromIndex(MainLightData.shadowResolution.level));
 
-            hdData.innerSpotPercent = Mathf.Min(95, MainLightHD.innerSpotPercent);
+            hdData.innerSpotPercent = Mathf.Min(95, MainLightData.innerSpotPercent);
 
             // Shadows
-            hdData.shadowUpdateMode = MainLightHD.shadowUpdateMode;
-            hdData.shadowDimmer = MainLightHD.shadowDimmer;
-            hdData.shadowNearPlane = MainLightHD.shadowNearPlane;
-            hdData.maxDepthBias = MainLightHD.maxDepthBias;
-            hdData.normalBias = MainLightHD.normalBias;
-            hdData.volumetricDimmer = MainLightHD.volumetricDimmer;
-            hdData.shadowTint = MainLightHD.shadowTint;
-            hdData.fadeDistance = MainLightHD.fadeDistance;
-            hdData.softnessScale = MainLightHD.softnessScale;
-            hdData.blockerSampleCount = MainLightHD.blockerSampleCount;
-            hdData.blockerSampleCount = MainLightHD.blockerSampleCount;
-            hdData.filterSampleCount = MainLightHD.filterSampleCount;
-            hdData.lightShadowRadius = MainLightHD.lightShadowRadius;
-            hdData.rayTraceContactShadow = MainLightHD.rayTraceContactShadow;
+            hdData.shadowUpdateMode = MainLightData.shadowUpdateMode;
+            hdData.shadowDimmer = MainLightData.shadowDimmer;
+            hdData.shadowNearPlane = MainLightData.shadowNearPlane;
+            hdData.maxDepthBias = MainLightData.maxDepthBias;
+            hdData.normalBias = MainLightData.normalBias;
+            hdData.volumetricDimmer = MainLightData.volumetricDimmer;
+            hdData.shadowTint = MainLightData.shadowTint;
+            hdData.fadeDistance = MainLightData.fadeDistance;
+            hdData.softnessScale = MainLightData.softnessScale;
+            hdData.blockerSampleCount = MainLightData.blockerSampleCount;
+            hdData.blockerSampleCount = MainLightData.blockerSampleCount;
+            hdData.filterSampleCount = MainLightData.filterSampleCount;
+            hdData.lightShadowRadius = MainLightData.lightShadowRadius;
+            hdData.rayTraceContactShadow = MainLightData.rayTraceContactShadow;
 
             // IES
-            if (MainLightHD.IESTexture != null)
+            if (MainLightData.IESTexture != null)
             {
-                hdData.IESTexture = MainLightHD.IESTexture;
-                hdData.spotIESCutoffPercent = MainLightHD.spotIESCutoffPercent;
+                hdData.IESTexture = MainLightData.IESTexture;
+                hdData.spotIESCutoffPercent = MainLightData.spotIESCutoffPercent;
 
                 if (source.cookie != null)
                 {

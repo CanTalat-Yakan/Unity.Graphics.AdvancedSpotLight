@@ -137,8 +137,8 @@ MonoBehaviour:
   m_ApplyRangeAttenuation: 1
   m_DisplayAreaLightEmissiveMesh: 0
   m_AreaLightCookie: {fileID: 0}
-  m_IESPoint: {fileID: -4911910727448539213, guid: c4b1249b5516f94458badcd60644101e, type: 3}
-  m_IESSpot: {fileID: -8599298567440333356, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESPoint: {fileID: -6231118750006148511, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESSpot: {fileID: -1629127558815912675, guid: c4b1249b5516f94458badcd60644101e, type: 3}
   m_IncludeForRayTracing: 1
   m_IncludeForPathTracing: 1
   m_AreaLightShadowCone: 120
@@ -288,7 +288,7 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1019.22003
+  m_Intensity: 16986.998
   m_Range: 50
   m_SpotAngle: 50
   m_InnerSpotAngle: 21.80208
@@ -354,15 +354,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c04c5b6d6874d439764d0d6aac0929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColorFringing: 10
+  ColorFringing: 0.25
+  ColorShifting: 0.25
   MainLight: {fileID: 0}
   RedLight: {fileID: 0}
   GreenLight: {fileID: 0}
   BlueLight: {fileID: 0}
-  MainLightHD: {fileID: 0}
-  RedLightHD: {fileID: 0}
-  GreenLightHD: {fileID: 0}
-  BlueLightHD: {fileID: 0}
+  MainLightData: {fileID: 0}
+  RedLightData: {fileID: 0}
+  GreenLightData: {fileID: 0}
+  BlueLightData: {fileID: 0}
 --- !u!114 &4618629864632881482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,8 +403,8 @@ MonoBehaviour:
   m_ApplyRangeAttenuation: 1
   m_DisplayAreaLightEmissiveMesh: 0
   m_AreaLightCookie: {fileID: 0}
-  m_IESPoint: {fileID: -4911910727448539213, guid: c4b1249b5516f94458badcd60644101e, type: 3}
-  m_IESSpot: {fileID: -8599298567440333356, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESPoint: {fileID: -6231118750006148511, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESSpot: {fileID: -1629127558815912675, guid: c4b1249b5516f94458badcd60644101e, type: 3}
   m_IncludeForRayTracing: 1
   m_IncludeForPathTracing: 1
   m_AreaLightShadowCone: 120
@@ -642,8 +643,8 @@ MonoBehaviour:
   m_ApplyRangeAttenuation: 1
   m_DisplayAreaLightEmissiveMesh: 0
   m_AreaLightCookie: {fileID: 0}
-  m_IESPoint: {fileID: -4911910727448539213, guid: c4b1249b5516f94458badcd60644101e, type: 3}
-  m_IESSpot: {fileID: -8599298567440333356, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESPoint: {fileID: -6231118750006148511, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESSpot: {fileID: -1629127558815912675, guid: c4b1249b5516f94458badcd60644101e, type: 3}
   m_IncludeForRayTracing: 1
   m_IncludeForPathTracing: 1
   m_AreaLightShadowCone: 120
@@ -882,8 +883,8 @@ MonoBehaviour:
   m_ApplyRangeAttenuation: 1
   m_DisplayAreaLightEmissiveMesh: 0
   m_AreaLightCookie: {fileID: 0}
-  m_IESPoint: {fileID: -4911910727448539213, guid: c4b1249b5516f94458badcd60644101e, type: 3}
-  m_IESSpot: {fileID: -8599298567440333356, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESPoint: {fileID: -6231118750006148511, guid: c4b1249b5516f94458badcd60644101e, type: 3}
+  m_IESSpot: {fileID: -1629127558815912675, guid: c4b1249b5516f94458badcd60644101e, type: 3}
   m_IncludeForRayTracing: 1
   m_IncludeForPathTracing: 1
   m_AreaLightShadowCone: 120

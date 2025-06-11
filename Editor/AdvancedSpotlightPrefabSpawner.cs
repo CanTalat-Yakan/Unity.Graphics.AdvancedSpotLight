@@ -16,19 +16,19 @@ namespace UnityEssentials
                 var spotlight = prefab.GetComponent<AdvancedSpotLight>();
 
                 spotlight.MainLight = prefab.GetComponent<Light>();
-                spotlight.MainLightHD = prefab.GetComponent<HDAdditionalLightData>();
+                spotlight.MainLightData = prefab.GetComponent<HDAdditionalLightData>();
 
                 spotlight.RedLight = prefab.transform.Find("Red Channel").GetComponent<Light>();
-                spotlight.RedLightHD = spotlight.RedLight.GetComponent<HDAdditionalLightData>();
-                spotlight.RedLightHD.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                spotlight.RedLightData = spotlight.RedLight.GetComponent<HDAdditionalLightData>();
+                spotlight.RedLightData.gameObject.hideFlags = HideFlags.HideInHierarchy;
 
                 spotlight.GreenLight = prefab.transform.Find("Green Channel").GetComponent<Light>();
-                spotlight.GreenLightHD = spotlight.GreenLight.GetComponent<HDAdditionalLightData>();
-                spotlight.GreenLightHD.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                spotlight.GreenLightData = spotlight.GreenLight.GetComponent<HDAdditionalLightData>();
+                spotlight.GreenLightData.gameObject.hideFlags = HideFlags.HideInHierarchy;
 
                 spotlight.BlueLight = prefab.transform.Find("Blue Channel").GetComponent<Light>();
-                spotlight.BlueLightHD = spotlight.BlueLight.GetComponent<HDAdditionalLightData>();
-                spotlight.BlueLightHD.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                spotlight.BlueLightData = spotlight.BlueLight.GetComponent<HDAdditionalLightData>();
+                spotlight.BlueLightData.gameObject.hideFlags = HideFlags.HideInHierarchy;
             }
 
             GameObjectUtility.SetParentAndAlign(prefab, menuCommand.context as GameObject);
