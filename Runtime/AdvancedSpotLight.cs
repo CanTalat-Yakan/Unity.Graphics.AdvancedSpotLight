@@ -51,18 +51,17 @@ namespace UnityEssentials
         private void UpdateChannelParameters()
         {
             // Apply ColorFringing as a spot angle offset
-            float t = Mathf.InverseLerp(10f, 120f, MainLight.spotAngle);
             float fringing = ColorFringing * 25f;
             RedLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing, 1, 160);
             GreenLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing * 0.5f, 1, 160 - fringing * 0.5f);
             BlueLight.spotAngle = Mathf.Clamp(MainLight.spotAngle + fringing * 0.25f, 1, 160 - fringing * 0.75f);
 
             // Apply ColorShifting as a rotation offset
-            float shiftH = ColorShifting * 5;
-            float shiftV = Mathf.Max(0, ColorShifting * -1) * 5;
+            float shiftHorizontal = ColorShifting * 5;
+            float shiftVertical = Mathf.Max(0, ColorShifting * -1) * 5;
             RedLight.transform.localEulerAngles = Vector3.zero;
-            GreenLight.transform.localEulerAngles = new Vector3(shiftV, shiftH * 0.5f, 0);
-            BlueLight.transform.localEulerAngles = new Vector3(-shiftV, shiftH, 0);
+            GreenLight.transform.localEulerAngles = new Vector3(shiftVertical, shiftHorizontal * 0.5f, 0);
+            BlueLight.transform.localEulerAngles = new Vector3(-shiftVertical, shiftHorizontal, 0);
         }
 
         private void CopyLightProperties(Light source, Light target, Color color)
