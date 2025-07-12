@@ -83,9 +83,11 @@ namespace UnityEssentials
             target.renderingLayerMask = source.renderingLayerMask;
             target.flare = source.flare;
             target.bounceIntensity = source.bounceIntensity;
-            target.lightmapBakeType = source.lightmapBakeType;
             target.areaSize = source.areaSize;
             target.renderingLayerMask = source.renderingLayerMask;
+#if UNITY_EDITOR
+            target.lightmapBakeType = source.lightmapBakeType;
+#endif
 
             // Shadows
             target.shadows = source.shadows;
