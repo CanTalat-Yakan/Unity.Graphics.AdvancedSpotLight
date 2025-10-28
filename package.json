@@ -1,13 +1,11 @@
 {
   "name": "com.unityessentials.advancedspotlight",
   "version": "1.0.0",
-  "displayName": "UnityEssentials AdvancedSpotLight",
+  "displayName": "Unity Graphics AdvancedSpotLight",
   "description": "This is a part of the UnityEssentials Ecosystem",
-  "unity": "2022.1",
+  "unity": "6000.0",
   "unityRelease": "",
   "dependencies": {
-    "com.unityessentials.core": "1.0.0",
-    "com.unityessentials.resourceloader": "1.0.0",
     "com.unity.render-pipelines.high-definition": "17.1.0"
   },
   "keywords": [],
