@@ -120,7 +120,7 @@ namespace UnityEssentials
             hdData.blockerSampleCount = MainLightData.blockerSampleCount;
             hdData.blockerSampleCount = MainLightData.blockerSampleCount;
             hdData.filterSampleCount = MainLightData.filterSampleCount;
-            hdData.lightShadowRadius = MainLightData.lightShadowRadius;
+            //hdData.lightShadowRadius = MainLightData.lightShadowRadius;
             hdData.rayTraceContactShadow = MainLightData.rayTraceContactShadow;
 
             // IES
