@@ -10,7 +10,7 @@ namespace UnityEssentials
         [MenuItem("GameObject/Essentials/Advanced Spot Light", false, priority = 121)]
         private static void InstantiateAdvancedSpotLight(MenuCommand menuCommand)
         {
-            var prefab = ResourceLoaderEditor.InstantiatePrefab("UnityEssentials_Prefab_AdvancedSpotLight", "Advanced Spot Light");
+            var prefab = AssetResolverEditor.InstantiatePrefab("UnityEssentials_Prefab_AdvancedSpotLight", "Advanced Spot Light");
             if (prefab != null)
             {
                 var spotlight = prefab.GetComponent<AdvancedSpotLight>();
